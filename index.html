@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snake Cartoon - Shop & Skins Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome per le icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Fredoka', cursive, sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #321a0e 0%, #110602 100%);
+        }
+
+        /* Pannelli Legno Cartoon */
+        .wood-panel {
+            background: linear-gradient(180deg, #854d0e 0%, #542d0c 100%);
+            border: 4px solid #b45309;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.25), inset 0 -4px 6px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0,0,0,0.6);
+            border-radius: 1.25rem;
+        }
+
+        .wood-badge {
+            background: linear-gradient(180deg, #451a03 0%, #290e02 100%);
+            border: 3px solid #78350f;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* Bottoni Legno e Oro */
+        .btn-wood {
+            background: linear-gradient(180deg, #d97706 0%, #b45309 100%);
+            box-shadow: 0 5px 0px #78350f, 0 8px 15px rgba(0, 0, 0, 0.4);
+            border: 2px solid #fef3c7;
+            transition: all 0.12s ease;
+        }
+        .btn-wood:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0px #78350f, 0 10px 18px rgba(0, 0, 0, 0.5);
+        }
+        .btn-wood:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0px #78350f, 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
+            box-shadow: 0 6px 0px #854d0e, 0 10px 20px rgba(0,0,0,0.5);
+            border: 2px solid #fef9c3;
+            transition: all 0.12s ease;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px #854d0e, 0 12px 24px rgba(0,0,0,0.6);
+        }
+        .btn-gold:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0px #854d0e, 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        .btn-purple {
+            background: linear-gradient(180deg, #a855f7 0%, #7e22ce 100%);
+            box-shadow: 0 5px 0px #581c87, 0 8px 15px rgba(0, 0, 0, 0.4);
+            border: 2px solid #f3e8ff;
+            transition: all 0.12s ease;
+        }
+        .btn-purple:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0px #581c87, 0 10px 18px rgba(0, 0, 0, 0.5);
+        }
+        .btn-purple:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0px #581c87, 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* D-Pad Touch Legno */
+        .d-btn {
+            background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+            box-shadow: 0 4px 0px #290e02, 0 4px 8px rgba(0,0,0,0.4);
+            border: 2px solid #b45309;
+            color: #fef3c7;
+        }
+        .d-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0px #290e02, 0 2px 4px rgba(0,0,0,0.3);
+            background: #451a03;
+        }
+
+        /* Frame Tabellone Campo di Gioco */
+        .board-container {
+            background: #1e0b04;
+            border: 10px solid #58260c;
+            outline: 4px solid #853e14;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.85), 0 15px 35px rgba(0, 0, 0, 0.7);
+            border-radius: 2rem;
+        }
+
+        /* Scrollbar personalizzata per lo Shop */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #290e02;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #b45309;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-between p-3 sm:p-5 h-full w-full select-none">
+
+    <!-- Header UI Superiore -->
+    <header class="w-full max-w-xl flex items-center justify-between gap-2 sm:gap-3 z-10 my-auto">
+        <div class="wood-panel px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 text-xl sm:text-2xl border border-amber-600 shadow-inner">
+                <i class="fa-solid fa-dragon"></i>
+            </div>
+            <div>
+                <h1 class="text-lg sm:text-2xl font-black text-amber-100 leading-none drop-shadow">Snake</h1>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-3">
+            <!-- Punti Totali Accumulati / Wallet -->
+            <div class="wood-badge px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-2xl flex flex-col items-center min-w-[70px] sm:min-w-[85px]">
+                <span class="text-[9px] sm:text-[10px] uppercase font-bold text-amber-400 tracking-wider">Tot Punti 🍎</span>
+                <span id="totalPointsDisplay" class="text-base sm:text-xl font-black text-amber-300 leading-none">0</span>
+            </div>
+
+            <!-- Score Partita -->
+            <div class="wood-badge px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-2xl flex flex-col items-center min-w-[65px] sm:min-w-[75px]">
+                <span class="text-[9px] sm:text-[10px] uppercase font-bold text-amber-500 tracking-wider">Punti</span>
+                <span id="score" class="text-base sm:text-xl font-black text-amber-100 leading-none">0</span>
+            </div>
+            
+            <!-- Record -->
+            <div class="wood-badge px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-2xl flex flex-col items-center min-w-[65px] sm:min-w-[75px]">
+                <span class="text-[9px] sm:text-[10px] uppercase font-bold text-amber-500 tracking-wider">Record 🏆</span>
+                <span id="highScore" class="text-base sm:text-xl font-black text-yellow-400 leading-none">0</span>
+            </div>
+
+            <button id="pauseBtn" class="btn-wood w-9 h-9 sm:w-11 sm:h-11 rounded-2xl font-bold flex items-center justify-center text-base sm:text-lg disabled:opacity-40" disabled>
+                <i class="fa-solid fa-pause text-amber-100" id="pauseIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Area di Gioco Centrale -->
+    <main class="flex-1 flex items-center justify-center w-full min-h-0">
+  <div class="board-container relative p-2.5 flex items-center justify-center max-h-[68vh] w-full">
+    <canvas id="gameCanvas" class="block rounded-xl max-h-[68vh] max-w-full object-contain"></canvas>
+  </div>
+</main>
+            
+            <!-- Overlay Menu Principale & Pause & Game Over -->
+            <div id="overlay" class="absolute inset-0 bg-black/65 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20 transition-all duration-300">
+                <div class="wood-panel p-5 sm:p-7 max-w-xs sm:max-w-sm w-full flex flex-col items-center animate-in fade-in zoom-in duration-200">
+                    <div id="overlayIcon" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-amber-950 text-yellow-400 flex items-center justify-center text-3xl sm:text-4xl mb-3 shadow-inner border-2 border-amber-600">
+                        <i class="fa-solid fa-play ml-1"></i>
+                    </div>
+
+                    <h2 id="overlayTitle" class="text-2xl sm:text-3xl font-black text-amber-100 mb-1 drop-shadow">Snake</h2>
+                    <p id="overlayMessage" class="text-amber-300 text-xs sm:text-sm mb-4 font-semibold">Raccogli mele e accumula punti per sbloccare le skin nello Shop!</p>
+
+                    <div class="w-full flex flex-col gap-2.5">
+                        <button id="startBtn" class="btn-gold w-full py-3 text-amber-950 font-black rounded-2xl text-base uppercase tracking-wider">
+                            Gioca
+                        </button>
+                        
+                        <button id="openShopBtn" class="btn-purple w-full py-2.5 text-white font-black rounded-2xl text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-store"></i> Shop & Skin
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overlay Negozio (Shop Modal) -->
+            <div id="shopModal" class="absolute inset-0 bg-black/80 backdrop-blur-md rounded-2xl flex flex-col items-center justify-between p-4 z-30 transition-all duration-300 hidden">
+                <div class="wood-panel w-full h-full p-4 flex flex-col items-center overflow-hidden">
+                    
+                    <!-- Top Shop Header -->
+                    <div class="w-full flex items-center justify-between pb-3 border-b-2 border-amber-800/60 mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-store text-yellow-400 text-xl"></i>
+                            <h2 class="text-xl font-black text-amber-100 uppercase tracking-wide">Negozio Skin</h2>
+                        </div>
+                        <div class="wood-badge px-3 py-1 rounded-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-apple-whole text-red-400 text-sm"></i>
+                            <span id="shopPoints" class="text-base font-black text-yellow-300">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Skin vs Temi -->
+                    <div class="flex gap-2 mb-3 w-full">
+                        <button id="tabSkins" class="flex-1 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-500 text-amber-950 border-2 border-amber-300">
+                            🐍 Skin Serpente
+                        </button>
+                        <button id="tabThemes" class="flex-1 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-950 text-amber-300 border-2 border-amber-800">
+                            🪵 Temi Legno
+                        </button>
+                    </div>
+
+                    <!-- Lista Articoli Scrollabile -->
+                    <div id="shopList" class="w-full flex-1 overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-2.5">
+                        <!-- Generato via JavaScript -->
+                    </div>
+
+                    <!-- Chiudi Shop -->
+                    <button id="closeShopBtn" class="btn-wood w-full py-2.5 mt-3 text-amber-100 font-black rounded-xl text-sm uppercase tracking-wider">
+                        Torna al Gioco
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+        <div class="hidden md:flex items-center gap-4 text-xs font-bold text-amber-200/80 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-2xl border border-amber-800">
+            <span><kbd class="px-2 py-1 bg-amber-950 border border-amber-700 rounded-lg text-amber-300">W A S D</kbd> o <kbd class="px-2 py-1 bg-amber-950 border border-amber-700 rounded-lg text-amber-300">Frecce</kbd></span>
+            <span>•</span>
+            <span><kbd class="px-2 py-1 bg-amber-950 border border-amber-700 rounded-lg text-amber-300">Spazio</kbd> Pausa</span>
+        </div>
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           DATI SKIN E TEMI (CATALOGO SHOP)
+           ========================================================================== */
+        const SKINS = [
+            {
+                id: 'emerald',
+                name: 'Smeraldo Classico',
+                cost: 0,
+                desc: 'Il classico serpente verde con criniera arancione.',
+                bodyColor: '#059669',
+                lightColor: '#34d399',
+                maneColor: '#ea580c',
+                spotColor: '#facc15',
+                eyeColor: '#ffffff'
+            },
+            {
+                id: 'ruby_dragon',
+                name: 'Drago Rubino',
+                cost: 100,
+                desc: 'Serpente rosso fuoco con cresta dorata brillante.',
+                bodyColor: '#dc2626',
+                lightColor: '#f87171',
+                maneColor: '#eab308',
+                spotColor: '#fef08a',
+                eyeColor: '#fef08a'
+            },
+            {
+                id: 'cyber_cobra',
+                name: 'Cyber Cobra',
+                cost: 250,
+                desc: 'Cobalto e ciano neon con finiture viola e occhi blu.',
+                bodyColor: '#0284c7',
+                lightColor: '#38bdf8',
+                maneColor: '#a855f7',
+                spotColor: '#ec4899',
+                eyeColor: '#a5f3fc'
+            },
+            {
+                id: 'royal_gold',
+                name: 'Pitone Reale',
+                cost: 500,
+                desc: 'Splendente skin d\'oro puro con dettagli regali!',
+                bodyColor: '#ca8a04',
+                lightColor: '#fde047',
+                maneColor: '#e11d48',
+                spotColor: '#ffffff',
+                eyeColor: '#fef08a'
+            },
+            {
+                id: 'rainbow_serpent',
+                name: 'Serpente Arcobaleno',
+                cost: 1000,
+                desc: 'Sfumature cangianti multilivello ed effetti magici!',
+                bodyColor: 'rainbow',
+                lightColor: '#ffffff',
+                maneColor: '#f43f5e',
+                spotColor: '#facc15',
+                eyeColor: '#ffffff'
+            }
+        ];
+
+        const THEMES = [
+            {
+                id: 'mahogany',
+                name: 'Mogano Classico',
+                cost: 0,
+                desc: 'Legno di mogano dorato e caldo.',
+                color1: '#834720',
+                color2: '#6a3615',
+                borderColor: '#230c03'
+            },
+            {
+                id: 'nordic_birch',
+                name: 'Betulla Nordica',
+                cost: 150,
+                desc: 'Legno di betulla chiaro e rilassante.',
+                color1: '#d97706',
+                color2: '#b45309',
+                borderColor: '#451a03'
+            },
+            {
+                id: 'dark_ebony',
+                name: 'Parquet Ebanizzato',
+                cost: 500,
+                desc: 'Legno scuro pregiato e ultra-elegante.',
+                color1: '#27272a',
+                color2: '#18181b',
+                borderColor: '#09090b'
+            },
+            {
+                id: 'enchanted_bamboo',
+                name: 'Bambù Incantato',
+                cost: 750,
+                desc: 'Listelli di bambù verde e finiture naturali.',
+                color1: '#15803d',
+                color2: '#166534',
+                borderColor: '#052e16'
+            }
+        ];
+
+        /* ==========================================================================
+           STATO E LOCALSTORAGE
+           ========================================================================== */
+        let totalPoints = parseInt(localStorage.getItem('snake_total_points')) || 0;
+        let unlockedSkins = JSON.parse(localStorage.getItem('snake_unlocked_skins')) || ['emerald'];
+        let activeSkinId = localStorage.getItem('snake_active_skin') || 'emerald';
+        let unlockedThemes = JSON.parse(localStorage.getItem('snake_unlocked_themes')) || ['mahogany'];
+        let activeThemeId = localStorage.getItem('snake_active_theme') || 'mahogany';
+        let highScore = parseInt(localStorage.getItem('snake_wooden_highscore')) || 0;
+
+        function saveUserData() {
+            localStorage.setItem('snake_total_points', totalPoints);
+            localStorage.setItem('snake_unlocked_skins', JSON.stringify(unlockedSkins));
+            localStorage.setItem('snake_active_skin', activeSkinId);
+            localStorage.setItem('snake_unlocked_themes', JSON.stringify(unlockedThemes));
+            localStorage.setItem('snake_active_theme', activeThemeId);
+            localStorage.setItem('snake_wooden_highscore', highScore);
+        }
+
+        /* ==========================================================================
+           AUDIO SYNTHESIZER
+           ========================================================================== */
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'eat') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(720, now + 0.12);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'die') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'turn') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(260, now);
+                gain.gain.setValueAtTime(0.04, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.03);
+                osc.start(now);
+                osc.stop(now + 0.03);
+            } else if (type === 'buy') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523, now);
+                osc.frequency.setValueAtTime(659, now + 0.1);
+                osc.frequency.setValueAtTime(783, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+        }
+
+        /* ==========================================================================
+           CONFIGURAZIONE CAMPO & CANVAS
+           ========================================================================== */
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const GRID_COUNT = 16;
+        let cellSize = 30;
+
+        function resizeCanvas() {
+            const maxW = Math.min(window.innerWidth * 0.9, 520);
+            const maxH = Math.min(window.innerHeight * 0.58, 520);
+            const minDimension = Math.max(300, Math.min(maxW, maxH));
+
+            cellSize = Math.floor(minDimension / GRID_COUNT);
+            const finalSize = cellSize * GRID_COUNT;
+
+            canvas.width = finalSize;
+            canvas.height = finalSize;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        /* Elementi UI */
+        const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('highScore');
+        const totalPointsDisplay = document.getElementById('totalPointsDisplay');
+        const shopPoints = document.getElementById('shopPoints');
+
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlayMessage = document.getElementById('overlayMessage');
+        const overlayIcon = document.getElementById('overlayIcon');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const pauseIcon = document.getElementById('pauseIcon');
+
+        const openShopBtn = document.getElementById('openShopBtn');
+        const closeShopBtn = document.getElementById('closeShopBtn');
+        const shopModal = document.getElementById('shopModal');
+        const shopList = document.getElementById('shopList');
+        const tabSkins = document.getElementById('tabSkins');
+        const tabThemes = document.getElementById('tabThemes');
+
+        let activeShopTab = 'skins';
+
+        function updateUI() {
+            highScoreEl.textContent = highScore;
+            totalPointsDisplay.textContent = totalPoints;
+            shopPoints.textContent = totalPoints;
+        }
+
+        /* ==========================================================================
+           LOGICA SHOP & TABS
+           ========================================================================== */
+        function renderShop() {
+            updateUI();
+            shopList.innerHTML = '';
+
+            if (activeShopTab === 'skins') {
+                tabSkins.className = "flex-1 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-500 text-amber-950 border-2 border-amber-300";
+                tabThemes.className = "flex-1 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-950 text-amber-300 border-2 border-amber-800";
+
+                SKINS.forEach(skin => {
+                    const isUnlocked = unlockedSkins.includes(skin.id);
+                    const isActive = activeSkinId === skin.id;
+
+                    const card = document.createElement('div');
+                    card.className = "wood-badge p-3 rounded-2xl flex items-center justify-between gap-3 border border-amber-700/60";
+
+                    let actionBtn = '';
+                    if (isActive) {
+                        actionBtn = `<span class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold uppercase">In Uso</span>`;
+                    } else if (isUnlocked) {
+                        actionBtn = `<button onclick="equipSkin('${skin.id}')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 text-xs font-black uppercase shadow">Equipaggia</button>`;
+                    } else {
+                        const canBuy = totalPoints >= skin.cost;
+                        actionBtn = `<button onclick="buySkin('${skin.id}', ${skin.cost})" class="px-3 py-1.5 rounded-xl ${canBuy ? 'bg-yellow-400 hover:bg-yellow-300 text-amber-950' : 'bg-gray-700 text-gray-400 opacity-60'} text-xs font-black uppercase shadow flex items-center gap-1">
+                            ${skin.cost} 🍎
+                        </button>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-black/40 flex items-center justify-center border border-amber-600 text-xl">
+                                🐍
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-amber-100 font-bold text-sm leading-tight">${skin.name}</h3>
+                                <p class="text-amber-400/80 text-[10px]">${skin.desc}</p>
+                            </div>
+                        </div>
+                        <div>${actionBtn}</div>
+                    `;
+                    shopList.appendChild(card);
+                });
+            } else {
+                tabThemes.className = "flex-1 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-500 text-amber-950 border-2 border-amber-300";
+                tabSkins.className = "flex-1 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-amber-950 text-amber-300 border-2 border-amber-800";
+
+                THEMES.forEach(theme => {
+                    const isUnlocked = unlockedThemes.includes(theme.id);
+                    const isActive = activeThemeId === theme.id;
+
+                    const card = document.createElement('div');
+                    card.className = "wood-badge p-3 rounded-2xl flex items-center justify-between gap-3 border border-amber-700/60";
+
+                    let actionBtn = '';
+                    if (isActive) {
+                        actionBtn = `<span class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold uppercase">In Uso</span>`;
+                    } else if (isUnlocked) {
+                        actionBtn = `<button onclick="equipTheme('${theme.id}')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 text-xs font-black uppercase shadow">Equipaggia</button>`;
+                    } else {
+                        const canBuy = totalPoints >= theme.cost;
+                        actionBtn = `<button onclick="buyTheme('${theme.id}', ${theme.cost})" class="px-3 py-1.5 rounded-xl ${canBuy ? 'bg-yellow-400 hover:bg-yellow-300 text-amber-950' : 'bg-gray-700 text-gray-400 opacity-60'} text-xs font-black uppercase shadow flex items-center gap-1">
+                            ${theme.cost} 🍎
+                        </button>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-black/40 flex items-center justify-center border border-amber-600 text-xl">
+                                🪵
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-amber-100 font-bold text-sm leading-tight">${theme.name}</h3>
+                                <p class="text-amber-400/80 text-[10px]">${theme.desc}</p>
+                            </div>
+                        </div>
+                        <div>${actionBtn}</div>
+                    `;
+                    shopList.appendChild(card);
+                });
+            }
+        }
+
+        window.equipSkin = function(id) {
+            activeSkinId = id;
+            saveUserData();
+            renderShop();
+            draw();
+        };
+
+        window.buySkin = function(id, cost) {
+            if (totalPoints >= cost && !unlockedSkins.includes(id)) {
+                totalPoints -= cost;
+                unlockedSkins.push(id);
+                activeSkinId = id;
+                playSound('buy');
+                saveUserData();
+                renderShop();
+                draw();
+            }
+        };
+
+        window.equipTheme = function(id) {
+            activeThemeId = id;
+            saveUserData();
+            renderShop();
+            draw();
+        };
+
+        window.buyTheme = function(id, cost) {
+            if (totalPoints >= cost && !unlockedThemes.includes(id)) {
+                totalPoints -= cost;
+                unlockedThemes.push(id);
+                activeThemeId = id;
+                playSound('buy');
+                saveUserData();
+                renderShop();
+                draw();
+            }
+        };
+
+        tabSkins.addEventListener('click', () => { activeShopTab = 'skins'; renderShop(); });
+        tabThemes.addEventListener('click', () => { activeShopTab = 'themes'; renderShop(); });
+
+        openShopBtn.addEventListener('click', () => {
+            initAudio();
+            renderShop();
+            shopModal.classList.remove('hidden');
+        });
+
+        closeShopBtn.addEventListener('click', () => {
+            shopModal.classList.add('hidden');
+        });
+
+        /* ==========================================================================
+           LOGICA GAME LOOP & FISICA
+           ========================================================================== */
+        let gridSnake = []; 
+        let pathHistory = []; 
+        let headPixel = { x: 0, y: 0 }; 
+        let targetGridHead = { x: 0, y: 0 };
+
+        let food = { x: 0, y: 0 };
+        let dirX = 1, dirY = 0;
+        let inputQueue = [];
+
+        let score = 0;
+        let isRunning = false;
+        let isPaused = false;
+        let lastTime = 0;
+
+        let moveSpeedInPixels = 0; 
+        let snakeLengthSegments = 3;
+
+        function startGame() {
+            initAudio();
+            gridSnake = [
+                { x: 5, y: 8 },
+                { x: 4, y: 8 },
+                { x: 3, y: 8 }
+            ];
+
+            snakeLengthSegments = 3;
+            dirX = 1; dirY = 0;
+            inputQueue = [];
+
+            headPixel = {
+                x: (gridSnake[0].x + 0.5) * cellSize,
+                y: (gridSnake[0].y + 0.5) * cellSize
+            };
+            targetGridHead = { x: gridSnake[0].x + 1, y: gridSnake[0].y };
+
+            pathHistory = [];
+            const totalPathLength = (snakeLengthSegments - 1) * cellSize;
+            for (let d = 0; d <= totalPathLength; d += 2) {
+                pathHistory.push({
+                    x: headPixel.x - d,
+                    y: headPixel.y
+                });
+            }
+
+            score = 0;
+            scoreEl.textContent = score;
+            
+            moveSpeedInPixels = cellSize * 4.8;
+
+            generateFood();
+
+            isRunning = true;
+            isPaused = false;
+            lastTime = performance.now();
+
+            pauseBtn.disabled = false;
+            pauseIcon.className = "fa-solid fa-pause text-amber-100";
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function generateFood() {
+            while (true) {
+                food.x = Math.floor(Math.random() * GRID_COUNT);
+                food.y = Math.floor(Math.random() * GRID_COUNT);
+                
+                const headGridX = Math.floor(headPixel.x / cellSize);
+                const headGridY = Math.floor(headPixel.y / cellSize);
+                
+                if (food.x === headGridX && food.y === headGridY) continue;
+                const onSnake = gridSnake.some(s => s.x === food.x && s.y === food.y);
+                if (!onSnake) break;
+            }
+        }
+
+        function gameLoop(now) {
+            if (!isRunning) return;
+
+            const dt = Math.min((now - lastTime) / 1000, 0.05);
+            lastTime = now;
+
+            if (!isPaused) {
+                updateSnakePosition(dt);
+                checkCollisions();
+            }
+
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateSnakePosition(dt) {
+            const centerTargetX = (targetGridHead.x + 0.5) * cellSize;
+            const centerTargetY = (targetGridHead.y + 0.5) * cellSize;
+
+            const distToTarget = Math.hypot(centerTargetX - headPixel.x, centerTargetY - headPixel.y);
+
+            if (distToTarget < moveSpeedInPixels * dt * 1.1) {
+                headPixel.x = centerTargetX;
+                headPixel.y = centerTargetY;
+
+                if (inputQueue.length > 0) {
+                    const nextDir = inputQueue.shift();
+                    if (nextDir.x !== -dirX || nextDir.x === 0) dirX = nextDir.x;
+                    if (nextDir.y !== -dirY || nextDir.y === 0) dirY = nextDir.y;
+                }
+
+                targetGridHead = {
+                    x: targetGridHead.x + dirX,
+                    y: targetGridHead.y + dirY
+                };
+            }
+
+            headPixel.x += dirX * moveSpeedInPixels * dt;
+            headPixel.y += dirY * moveSpeedInPixels * dt;
+
+            pathHistory.unshift({ x: headPixel.x, y: headPixel.y });
+
+            const maxPathLength = snakeLengthSegments * cellSize;
+            let accumulatedLength = 0;
+            let trimIndex = pathHistory.length - 1;
+
+            for (let i = 1; i < pathHistory.length; i++) {
+                const segLen = Math.hypot(pathHistory[i].x - pathHistory[i-1].x, pathHistory[i].y - pathHistory[i-1].y);
+                accumulatedLength += segLen;
+                if (accumulatedLength > maxPathLength) {
+                    trimIndex = i;
+                    break;
+                }
+            }
+            if (trimIndex < pathHistory.length - 1) {
+                pathHistory.length = trimIndex + 1;
+            }
+
+            updateGridSnakeFromPath();
+        }
+
+        function updateGridSnakeFromPath() {
+            gridSnake = [];
+            const stepDist = cellSize;
+            
+            for (let i = 0; i < snakeLengthSegments; i++) {
+                const pt = getPointAlongPath(i * stepDist);
+                if (pt) {
+                    gridSnake.push({
+                        x: Math.floor(pt.x / cellSize),
+                        y: Math.floor(pt.y / cellSize)
+                    });
+                }
+            }
+        }
+
+        function getPointAlongPath(targetDist) {
+            if (pathHistory.length === 0) return headPixel;
+            if (targetDist <= 0) return pathHistory[0];
+
+            let currentDist = 0;
+            for (let i = 1; i < pathHistory.length; i++) {
+                const p1 = pathHistory[i - 1];
+                const p2 = pathHistory[i];
+                const segDist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+
+                if (currentDist + segDist >= targetDist) {
+                    const remain = targetDist - currentDist;
+                    const t = remain / (segDist || 1);
+                    return {
+                        x: p1.x + (p2.x - p1.x) * t,
+                        y: p1.y + (p2.y - p1.y) * t
+                    };
+                }
+                currentDist += segDist;
+            }
+            return pathHistory[pathHistory.length - 1];
+        }
+
+        function checkCollisions() {
+            if (headPixel.x < 0 || headPixel.x > canvas.width || headPixel.y < 0 || headPixel.y > canvas.height) {
+                playSound('die');
+                gameOver("Hai urtato la cornice del tabellone!");
+                return;
+            }
+
+            const foodCenterX = (food.x + 0.5) * cellSize;
+            const foodCenterY = (food.y + 0.5) * cellSize;
+            const distToFood = Math.hypot(headPixel.x - foodCenterX, headPixel.y - foodCenterY);
+
+            if (distToFood < cellSize * 0.5) {
+                playSound('eat');
+                score += 10;
+                totalPoints += 10;
+                
+                scoreEl.textContent = score;
+                totalPointsDisplay.textContent = totalPoints;
+                
+                snakeLengthSegments += 1;
+                moveSpeedInPixels += cellSize * 0.12;
+
+                if (score > highScore) {
+                    highScore = score;
+                    highScoreEl.textContent = highScore;
+                }
+
+                saveUserData();
+                generateFood();
+            }
+
+            const headGridX = Math.floor(headPixel.x / cellSize);
+            const headGridY = Math.floor(headPixel.y / cellSize);
+
+            for (let i = 3; i < gridSnake.length; i++) {
+                if (gridSnake[i].x === headGridX && gridSnake[i].y === headGridY) {
+                    playSound('die');
+                    gameOver("Ti sei scontrato con il tuo corpo!");
+                    return;
+                }
+            }
+        }
+
+        function changeDirection(newDx, newDy) {
+            const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : { x: dirX, y: dirY };
+
+            if (newDx === -lastDir.x && newDx !== 0) return;
+            if (newDy === -lastDir.y && newDy !== 0) return;
+
+            if (inputQueue.length < 2) {
+                inputQueue.push({ x: newDx, y: newDy });
+                playSound('turn');
+            }
+        }
+
+        function togglePause() {
+            if (!isRunning) return;
+            isPaused = !isPaused;
+
+            if (isPaused) {
+                pauseIcon.className = "fa-solid fa-play text-amber-100 ml-0.5";
+                overlayTitle.textContent = "Pausa";
+                overlayMessage.textContent = "Gioco in pausa...";
+                overlayIcon.innerHTML = '<i class="fa-solid fa-pause text-yellow-400"></i>';
+                startBtn.textContent = "Riprendi";
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                pauseIcon.className = "fa-solid fa-pause text-amber-100";
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                lastTime = performance.now();
+            }
+        }
+
+        function gameOver(reason) {
+            isRunning = false;
+            pauseBtn.disabled = true;
+
+            overlayTitle.textContent = "Game Over!";
+            overlayMessage.textContent = `${reason} Punti: ${score}`;
+            overlayIcon.innerHTML = '<i class="fa-solid fa-skull text-red-400"></i>';
+            startBtn.textContent = "Rigioca";
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        /* ==========================================================================
+           RENDER CANVAS & SKIN SYSTEM
+           ========================================================================== */
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. TEMA TABELLONE
+            const theme = THEMES.find(t => t.id === activeThemeId) || THEMES[0];
+            for (let x = 0; x < GRID_COUNT; x++) {
+                for (let y = 0; y < GRID_COUNT; y++) {
+                    const isEven = (x + y) % 2 === 0;
+
+                    ctx.fillStyle = isEven ? theme.color1 : theme.color2;
+                    ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+                    ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 2, 2);
+
+                    ctx.strokeStyle = theme.borderColor;
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+            }
+
+            // 2. MELA CARTOON
+            const fx = (food.x + 0.5) * cellSize;
+            const fy = (food.y + 0.5) * cellSize;
+            const appleRadius = cellSize * 0.42;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(fx, fy + cellSize * 0.35, appleRadius * 0.85, appleRadius * 0.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(fx, fy + 2, appleRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#fca5a5';
+            ctx.beginPath();
+            ctx.arc(fx - appleRadius * 0.3, fy - appleRadius * 0.3, appleRadius * 0.32, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath();
+            ctx.ellipse(fx + appleRadius * 0.35, fy - appleRadius * 0.65, appleRadius * 0.38, appleRadius * 0.2, Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#451a03';
+            ctx.lineWidth = Math.max(2, cellSize * 0.08);
+            ctx.beginPath();
+            ctx.moveTo(fx, fy - appleRadius * 0.4);
+            ctx.lineTo(fx + 2, fy - appleRadius * 0.85);
+            ctx.stroke();
+
+            // 3. SERPENTE E SKIN
+            if (pathHistory.length < 2) return;
+
+            const skin = SKINS.find(s => s.id === activeSkinId) || SKINS[0];
+            const totalDist = (snakeLengthSegments - 1) * cellSize;
+
+            // --- CRESTA / CRINIERA ---
+            for (let d = 0; d <= totalDist; d += cellSize * 0.2) {
+                const pt = getPointAlongPath(d);
+                if (pt) {
+                    ctx.fillStyle = skin.maneColor;
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, cellSize * 0.48, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // --- CORPO PRINCIPALE ---
+            ctx.lineWidth = cellSize * 0.74;
+
+            if (skin.bodyColor === 'rainbow') {
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#ef4444');
+                grad.addColorStop(0.2, '#f97316');
+                grad.addColorStop(0.4, '#eab308');
+                grad.addColorStop(0.6, '#22c55e');
+                grad.addColorStop(0.8, '#3b82f6');
+                grad.addColorStop(1, '#a855f7');
+                ctx.strokeStyle = grad;
+            } else {
+                ctx.strokeStyle = skin.bodyColor;
+            }
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(pathHistory[0].x, pathHistory[0].y);
+            for (let i = 1; i < pathHistory.length; i++) {
+                ctx.lineTo(pathHistory[i].x, pathHistory[i].y);
+            }
+            ctx.stroke();
+
+            // Luce Dorsale
+            ctx.lineWidth = cellSize * 0.44;
+            ctx.strokeStyle = skin.lightColor;
+            ctx.beginPath();
+            ctx.moveTo(pathHistory[0].x, pathHistory[0].y);
+            for (let i = 1; i < pathHistory.length; i++) {
+                ctx.lineTo(pathHistory[i].x, pathHistory[i].y);
+            }
+            ctx.stroke();
+
+            // Macchie / Scaglie
+            for (let d = cellSize * 0.75; d < totalDist; d += cellSize * 0.75) {
+                const pt = getPointAlongPath(d);
+                if (pt) {
+                    ctx.fillStyle = skin.spotColor;
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, cellSize * 0.14, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // --- TESTA ED OCCHI ---
+            const hx = pathHistory[0].x;
+            const hy = pathHistory[0].y;
+
+            ctx.fillStyle = skin.bodyColor === 'rainbow' ? '#ec4899' : skin.bodyColor;
+            ctx.strokeStyle = '#022c22';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(hx, hy, cellSize * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            let e1x = hx - cellSize * 0.18, e1y = hy - cellSize * 0.18;
+            let e2x = hx + cellSize * 0.18, e2y = hy - cellSize * 0.18;
+
+            if (dirX === 1) {
+                e1x = e2x = hx + cellSize * 0.2;
+                e1y = hy - cellSize * 0.18; e2y = hy + cellSize * 0.18;
+            } else if (dirX === -1) {
+                e1x = e2x = hx - cellSize * 0.2;
+                e1y = hy - cellSize * 0.18; e2y = hy + cellSize * 0.18;
+            } else if (dirY === 1) {
+                e1y = e2y = hy + cellSize * 0.2;
+                e1x = hx - cellSize * 0.18; e2x = hx + cellSize * 0.18;
+            } else if (dirY === -1) {
+                e1y = e2y = hy - cellSize * 0.2;
+                e1x = hx - cellSize * 0.18; e2x = hx + cellSize * 0.18;
+            }
+
+            ctx.fillStyle = skin.eyeColor;
+            ctx.beginPath();
+            ctx.arc(e1x, e1y, cellSize * 0.19, 0, Math.PI * 2);
+            ctx.arc(e2x, e2y, cellSize * 0.19, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(e1x + (dirX * 2), e1y + (dirY * 2), cellSize * 0.1, 0, Math.PI * 2);
+            ctx.arc(e2x + (dirX * 2), e2y + (dirY * 2), cellSize * 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Lingua
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(hx, hy);
+            ctx.lineTo(hx + dirX * cellSize * 0.62, hy + dirY * cellSize * 0.62);
+            ctx.stroke();
+        }
+
+        /* ==========================================================================
+           LISTENERS INPUT (KEYBOARD, TOUCH D-PAD & SWIPE GESTURES)
+           ========================================================================== */
+        window.addEventListener('keydown', (e) => {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) {
+                e.preventDefault();
+            }
+
+            if (!isRunning && (e.code === 'Space' || e.code === 'Enter')) {
+                startGame();
+                return;
+            }
+
+            switch (e.key.toLowerCase()) {
+                case 'arrowup':
+                case 'w':
+                    changeDirection(0, -1);
+                    break;
+                case 'arrowdown':
+                case 's':
+                    changeDirection(0, 1);
+                    break;
+                case 'arrowleft':
+                case 'a':
+                    changeDirection(-1, 0);
+                    break;
+                case 'arrowright':
+                case 'd':
+                    changeDirection(1, 0);
+                    break;
+                case 'p':
+                case ' ':
+                    togglePause();
+                    break;
+            }
+        });
+
+        /* Controlli Touch D-Pad */
+        const addTouchControl = (id, dx, dy) => {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            const handlePress = (e) => {
+                e.preventDefault();
+                changeDirection(dx, dy);
+            };
+            btn.addEventListener('touchstart', handlePress, { passive: false });
+            btn.addEventListener('click', handlePress);
+        };
+
+        addTouchControl('btnUp', 0, -1);
+        addTouchControl('btnDown', 0, 1);
+        addTouchControl('btnLeft', -1, 0);
+        addTouchControl('btnRight', 1, 0);
+
+        /* Gestione Swipe Gestures direttamente sul Canvas */
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (e.changedTouches.length === 0) return;
+            const diffX = e.changedTouches[0].clientX - touchStartX;
+            const diffY = e.changedTouches[0].clientY - touchStartY;
+
+            const minSwipeDistance = 25;
+
+            if (Math.max(Math.abs(diffX), Math.abs(diffY)) > minSwipeDistance) {
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    // Swipe orizzontale
+                    if (diffX > 0) changeDirection(1, 0);
+                    else changeDirection(-1, 0);
+                } else {
+                    // Swipe verticale
+                    if (diffY > 0) changeDirection(0, 1);
+                    else changeDirection(0, -1);
+                }
+            }
+        }, { passive: true });
+
+        startBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+
+        updateUI();
+        resizeCanvas();
+        draw();
+    </script>
+</body>
+</html>
