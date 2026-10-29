@@ -121,9 +121,28 @@
             background: #b45309;
             border-radius: 8px;
         }
+
+        .exit-button {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 2rem;
+            line-height: 1;
+            color: #94a3b8;
+            text-decoration: none;
+            z-index: 2001;
+            transition: all 0.2s ease;
+            font-family: Arial, sans-serif;
+        }
+        .exit-button:hover {
+            color: #ffffff;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between p-3 sm:p-5 h-full w-full select-none">
+
+    <a href="#" onclick="window.close(); return false;" class="exit-button" title="Torna all'Hub">×</a>
 
     <!-- Header UI Superiore -->
     <header class="w-full max-w-xl flex items-center justify-between gap-2 sm:gap-3 z-10 my-auto">
@@ -163,11 +182,9 @@
 
     <!-- Area di Gioco Centrale -->
     <main class="flex-1 flex items-center justify-center w-full min-h-0">
-  <div class="board-container relative p-2.5 flex items-center justify-center max-h-[68vh] w-full">
-    <canvas id="gameCanvas" class="block rounded-xl max-h-[68vh] max-w-full object-contain"></canvas>
-  </div>
-</main>
-            
+        <div class="board-container relative p-2.5 flex items-center justify-center max-h-[68vh] w-full">
+            <canvas id="gameCanvas" class="block rounded-xl max-h-[68vh] max-w-full object-contain"></canvas>
+
             <!-- Overlay Menu Principale & Pause & Game Over -->
             <div id="overlay" class="absolute inset-0 bg-black/65 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20 transition-all duration-300">
                 <div class="wood-panel p-5 sm:p-7 max-w-xs sm:max-w-sm w-full flex flex-col items-center animate-in fade-in zoom-in duration-200">
@@ -231,6 +248,7 @@
         </div>
     </main>
 
+    <footer class="w-full flex justify-center pb-2 z-10">
         <div class="hidden md:flex items-center gap-4 text-xs font-bold text-amber-200/80 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-2xl border border-amber-800">
             <span><kbd class="px-2 py-1 bg-amber-950 border border-amber-700 rounded-lg text-amber-300">W A S D</kbd> o <kbd class="px-2 py-1 bg-amber-950 border border-amber-700 rounded-lg text-amber-300">Frecce</kbd></span>
             <span>•</span>
@@ -239,6 +257,21 @@
     </footer>
 
     <script>
+        /* ==========================================================================
+           FUNZIONE NOTIFICA HUB ARCADE
+           ========================================================================== */
+        function notifyHub(gameKey, score) {
+            const pointsToAward = 100 + (score || 0); // 100 XP base + punti mela raccolti
+            const target = window.opener || (window.parent !== window ? window.parent : null);
+            if (target) {
+                target.postMessage({
+                    gameKey: gameKey || 'snake',
+                    score: pointsToAward,
+                    points: pointsToAward
+                }, '*');
+            }
+        }
+
         /* ==========================================================================
            DATI SKIN E TEMI (CATALOGO SHOP)
            ========================================================================== */
@@ -857,6 +890,9 @@
             isRunning = false;
             pauseBtn.disabled = true;
 
+            // 🟢 Invia Punti/XP all'Hub Arcade
+            notifyHub('snake', score);
+
             overlayTitle.textContent = "Game Over!";
             overlayMessage.textContent = `${reason} Punti: ${score}`;
             overlayIcon.innerHTML = '<i class="fa-solid fa-skull text-red-400"></i>';
@@ -1035,7 +1071,7 @@
         }
 
         /* ==========================================================================
-           LISTENERS INPUT (KEYBOARD, TOUCH D-PAD & SWIPE GESTURES)
+           LISTENERS INPUT
            ========================================================================== */
         window.addEventListener('keydown', (e) => {
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) {
@@ -1071,24 +1107,7 @@
             }
         });
 
-        /* Controlli Touch D-Pad */
-        const addTouchControl = (id, dx, dy) => {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            const handlePress = (e) => {
-                e.preventDefault();
-                changeDirection(dx, dy);
-            };
-            btn.addEventListener('touchstart', handlePress, { passive: false });
-            btn.addEventListener('click', handlePress);
-        };
-
-        addTouchControl('btnUp', 0, -1);
-        addTouchControl('btnDown', 0, 1);
-        addTouchControl('btnLeft', -1, 0);
-        addTouchControl('btnRight', 1, 0);
-
-        /* Gestione Swipe Gestures direttamente sul Canvas */
+        /* Gestione Swipe Gestures sul Canvas */
         let touchStartX = 0;
         let touchStartY = 0;
 
@@ -1108,11 +1127,9 @@
 
             if (Math.max(Math.abs(diffX), Math.abs(diffY)) > minSwipeDistance) {
                 if (Math.abs(diffX) > Math.abs(diffY)) {
-                    // Swipe orizzontale
                     if (diffX > 0) changeDirection(1, 0);
                     else changeDirection(-1, 0);
                 } else {
-                    // Swipe verticale
                     if (diffY > 0) changeDirection(0, 1);
                     else changeDirection(0, -1);
                 }
