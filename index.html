@@ -729,51 +729,51 @@
             requestAnimationFrame(gameLoop);
         }
 
-        function updateSnakePosition(dt) {
-            const centerTargetX = (targetGridHead.x + 0.5) * cellSize;
-            const centerTargetY = (targetGridHead.y + 0.5) * cellSize;
+      function updateSnakePosition(dt) {
+    const centerTargetX = (targetGridHead.x + 0.5) * cellSize;
+    const centerTargetY = (targetGridHead.y + 0.5) * cellSize;
 
-            const distToTarget = Math.hypot(centerTargetX - headPixel.x, centerTargetY - headPixel.y);
+    const distToTarget = Math.hypot(centerTargetX - headPixel.x, centerTargetY - headPixel.y);
 
-            if (distToTarget < moveSpeedInPixels * dt * 1.1) {
-                headPixel.x = centerTargetX;
-                headPixel.y = centerTargetY;
+    if (distToTarget < moveSpeedInPixels * dt * 1.1) {
+        headPixel.x = centerTargetX;
+        headPixel.y = centerTargetY;
 
-                if (inputQueue.length > 0) {
-                    const nextDir = inputQueue.shift();
-                    if (nextDir.x !== -dirX || nextDir.x === 0) dirX = nextDir.x;
-                    if (nextDir.y !== -dirY || nextDir.y === 0) dirY = nextDir.y;
-                }
-
-                targetGridHead = {
-                    x: targetGridHead.x + dirX,
-                    y: targetGridHead.y + dirY
-                };
-            }
-
-            headPixel.x += dirX * moveSpeedInPixels * dt;
-            headPixel.y += dirY * moveSpeedInPixels * dt;
-
-            pathHistory.unshift({ x: headPixel.x, y: headPixel.y });
-
-            const maxPathLength = snakeLengthSegments * cellSize;
-            let accumulatedLength = 0;
-            let trimIndex = pathHistory.length - 1;
-
-            for (let i = 1; i < pathHistory.length; i++) {
-                const segLen = Math.hypot(pathHistory[i].x - pathHistory[i-1].x, pathHistory[i].y - pathHistory[i-1].y);
-                accumulatedLength += segLen;
-                if (accumulatedLength > maxPathLength) {
-                    trimIndex = i;
-                    break;
-                }
-            }
-            if (trimIndex < pathHistory.length - 1) {
-                pathHistory.length = trimIndex + 1;
-            }
-
-            updateGridSnakeFromPath();
+        if (inputQueue.length > 0) {
+            const nextDir = inputQueue.shift();
+            if (nextDir.x !== -dirX || nextDir.x === 0) dirX = nextDir.x;
+            if (nextDir.y !== -dirY || nextDir.y === 0) dirY = nextDir.y;
         }
+
+        targetGridHead = {
+            x: targetGridHead.x + dirX,
+            y: targetGridHead.y + dirY
+        };
+    }
+
+    headPixel.x += dirX * moveSpeedInPixels * dt;
+    headPixel.y += dirY * moveSpeedInPixels * dt;
+
+    pathHistory.unshift({ x: headPixel.x, y: headPixel.y });
+
+    const maxPathLength = snakeLengthSegments * cellSize;
+    let accumulatedLength = 0;
+    let trimIndex = pathHistory.length - 1;
+
+    for (let i = 1; i < pathHistory.length; i++) {
+        const segLen = Math.hypot(pathHistory[i].x - pathHistory[i-1].x, pathHistory[i].y - pathHistory[i-1].y);
+        accumulatedLength += segLen;
+        if (accumulatedLength > maxPathLength) {
+            trimIndex = i;
+            break;
+        }
+    }
+    if (trimIndex < pathHistory.length - 1) {
+        pathHistory.length = trimIndex + 1;
+    }
+
+    updateGridSnakeFromPath();
+}
 
         function updateGridSnakeFromPath() {
             gridSnake = [];
@@ -856,18 +856,34 @@
             }
         }
 
-        function changeDirection(newDx, newDy) {
-            const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : { x: dirX, y: dirY };
+function changeDirection(newDx, newDy) {
+    // Evita l'inversione a U immediata
+    if (newDx === -dirX && newDx !== 0) return;
+    if (newDy === -dirY && newDy !== 0) return;
 
-            if (newDx === -lastDir.x && newDx !== 0) return;
-            if (newDy === -lastDir.y && newDy !== 0) return;
+    dirX = newDx;
+    dirY = newDy;
 
-            if (inputQueue.length < 2) {
-                inputQueue.push({ x: newDx, y: newDy });
-                playSound('turn');
-            }
-        }
+    // Individua la casella attuale della testa
+    const currentGridX = Math.floor(headPixel.x / cellSize);
+    const currentGridY = Math.floor(headPixel.y / cellSize);
 
+    // Blocca e centra l'asse ortogonale al centro esatto della corsia
+    if (dirX !== 0) {
+        headPixel.y = (currentGridY + 0.5) * cellSize;
+        targetGridHead = { x: currentGridX + dirX, y: currentGridY };
+    } else if (dirY !== 0) {
+        headPixel.x = (currentGridX + 0.5) * cellSize;
+        targetGridHead = { x: currentGridX, y: currentGridY + dirY };
+    }
+
+    // Aggiorna subito la testa nella storia del percorso per evitare segmenti storti
+    if (pathHistory.length > 0) {
+        pathHistory[0] = { x: headPixel.x, y: headPixel.y };
+    }
+
+    playSound('turn');
+}
         function togglePause() {
             if (!isRunning) return;
             isPaused = !isPaused;
